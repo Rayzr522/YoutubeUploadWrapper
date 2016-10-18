@@ -19,7 +19,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.SpringLayout;
 
 /**
@@ -121,33 +120,67 @@ public class Main extends JFrame {
                 return;
             }
 
-            ProcessBuilder builder = new ProcessBuilder("youtube-upload", "--title=\"" + name.getText() + "\"", "--description=\"" + description.getText() + "\"", "--category=" + category.getText(),
-                    "--tags=\"" + tags.getText() + "\"", "--thumbnail=\"" + thumbnailFile.getAbsolutePath() + "\"", "\"" + videoFile.getAbsolutePath() + "\"");
+            alert("Press OK to start the command");
+            // alert("Press OK to get the command:");
 
-            alert("Press OK to get the command:");
+            // JFrame frame = new JFrame("Command");
+            // frame.add(new JTextArea(concat(builder.command(), " ")));
+            // frame.setMinimumSize(new Dimension(400, 400));
+            //
+            // frame.setVisible(true);
+            // frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-            JFrame frame = new JFrame("Command");
-            frame.add(new JTextArea(concat(builder.command(), " ")));
-            frame.setMinimumSize(new Dimension(400, 400));
+//            if (runCommand("alias", "python=\"python3\"") < 0) {
+//                alert("The command failed to execute!");
+//                return;
+//            }
 
-            frame.setVisible(true);
-            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-            /*
-             * builder.redirectInput(logFile);
-             * builder.redirectErrorStream(true);
-             * 
-             * try { builder.start(); } catch (IOException e1) {
-             * e1.printStackTrace(); alert(
-             * "Something horrible went wrong and the program was unable to start the CLI command!"
-             * ); alert("The program will now exit"); System.exit(1); }
-             */
+            if (runCommand("/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5", Config.expandPath("$HOME/.scripts/youtube-upload-master/bin/youtube-upload"),
+                    Config.expandPath("--client-secrets='$HOME/.scripts/youtube-upload-master/client-secrets.json"), "--title=\"" + name.getText() + "\"",
+                    "--description=\"" + description.getText() + "\"", "--category=" + category.getText(), "--tags=\"" + tags.getText() + "\"",
+                    "--thumbnail=\"" + thumbnailFile.getAbsolutePath() + "\"", "\"" + videoFile.getAbsolutePath() + "\"") < 0) {
+                alert("The command failed to execute!");
+                return;
+            }
 
         } else {
 
             // Yup, you failed
             alert("Please fill in all fields!");
         }
+
+    }
+
+    private int runCommand(String... args) {
+
+        try {
+
+            ProcessBuilder builder = new ProcessBuilder(args);
+
+            builder.redirectOutput(logFile);
+            builder.redirectErrorStream(true);
+
+            Process process = builder.start();
+            while (process.isAlive()) {
+                // readFromLog();
+                Thread.sleep(1000);
+            }
+
+            return process.exitValue();
+
+        } catch (IOException e1) {
+            e1.printStackTrace();
+            alert("Something horrible went wrong and the program was unable to start the CLI command!");
+            alert("The program will now exit");
+            System.exit(1);
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
+            alert("The thread was interrupted!");
+            alert("The program will now exit");
+            System.exit(1);
+        }
+
+        return -1;
 
     }
 

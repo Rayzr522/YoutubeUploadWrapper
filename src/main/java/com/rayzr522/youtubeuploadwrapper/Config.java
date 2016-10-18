@@ -117,7 +117,7 @@ public class Config {
     }
 
     public static String expandPath(String path) {
-        return path.replace("/", File.separator).replace("$HOME", System.getProperty("user.home"));
+        return path.replace("/", File.separator).replaceAll("\\$HOME|~", System.getProperty("user.home"));
     }
 
 }
