@@ -130,10 +130,10 @@ public class Main extends JFrame {
             // frame.setVisible(true);
             // frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-//            if (runCommand("alias", "python=\"python3\"") < 0) {
-//                alert("The command failed to execute!");
-//                return;
-//            }
+            // if (runCommand("alias", "python=\"python3\"") < 0) {
+            // alert("The command failed to execute!");
+            // return;
+            // }
 
             if (runCommand("/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5", Config.expandPath("$HOME/.scripts/youtube-upload-master/bin/youtube-upload"),
                     Config.expandPath("--client-secrets='$HOME/.scripts/youtube-upload-master/client-secrets.json"), "--title=\"" + name.getText() + "\"",
